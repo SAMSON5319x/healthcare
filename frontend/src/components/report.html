@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ccc;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 70px 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 100vh;
+        }
+
+        .header {
+            grid-column: span 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 0 20px;
+            border-radius: 15px;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header a.active {
+            color: white;
+            background-color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .photo, .reports, .meditation, .doctors-details, .contact-info {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            font-weight: bold;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .photo {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .reports {
+            grid-column: 2 / 4;
+            grid-row: 2 / 3;
+        }
+
+        .meditation {
+            grid-column: 1 / 2;
+            grid-row: 3 / 4;
+        }
+
+        .doctors-details {
+            grid-column: 2 / 3;
+            grid-row: 3 / 4;
+        }
+
+        .contact-info {
+            grid-column: 3 / 4;
+            grid-row: 3 / 4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="#">Home</a>
+            <a href="#" class="active">Reports</a>
+            <a href="#">Routine</a>
+            <div>
+                <a href="#">Signup</a> |
+                <a href="#">Log-in</a>
+            </div>
+        </div>
+
+        <!-- Photo Section -->
+        <div class="photo">
+            <h2>Photo</h2>
+            <img id="photo" src="" alt="Profile Photo" style="max-width: 100%; border-radius: 10px;" />
+        </div>
+
+        <!-- Reports Section -->
+        <div class="reports">
+            <h2>Reports</h2>
+            <div id="reports">Loading reports...</div>
+        </div>
+
+        <!-- Meditation Section -->
+        <div class="meditation">
+            <h2>Meditation</h2>
+            <div id="meditation">Loading meditation data...</div>
+        </div>
+
+        <!-- Doctors Details Section -->
+        <div class="doctors-details">
+            <h2>Doctors Details</h2>
+            <div id="doctors-details">Loading doctors details...</div>
+        </div>
+
+        <!-- Contact Info Section -->
+        <div class="contact-info">
+            <h2>Contact Info</h2>
+            <div id="contact-info">Loading contact information...</div>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch and display the photo
+        function loadPhoto() {
+            fetch('/api/photo')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('photo').src = data.photoUrl;
+                })
+                .catch(error => {
+                    console.error('Error loading photo:', error);
+                });
+        }
+
+        // Function to fetch and display reports
+        function loadReports() {
+            fetch('/api/reports')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('reports').innerHTML = 
+                        '<ul>' + data.reports.map(report => `<li>${report.title}</li>`).join('') + '</ul>';
+                })
+                .catch(error => {
+                    document.getElementById('reports').textContent = 'Failed to load reports.';
+                    console.error('Error loading reports:', error);
+                });
+        }
+
+        // Function to fetch and display meditation data
+        function loadMeditation() {
+            fetch('/api/meditation')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('meditation').textContent = data.meditationTips;
+                })
+                .catch(error => {
+                    document.getElementById('meditation').textContent = 'Failed to load meditation data.';
+                    console.error('Error loading meditation data:', error);
+                });
+        }
+
+        // Function to fetch and display doctors details
+        function loadDoctorsDetails() {
+            fetch('/api/doctors')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('doctors-details').innerHTML = 
+                        '<ul>' + data.doctors.map(doctor => 
+                            `<li>${doctor.name} - ${doctor.specialization}</li>`).join('') + '</ul>';
+                })
+                .catch(error => {
+                    document.getElementById('doctors-details').textContent = 'Failed to load doctors details.';
+                    console.error('Error loading doctors details:', error);
+                });
+        }
+
+        // Function to fetch and display contact information
+        function loadContactInfo() {
+            fetch('/api/contact-info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('contact-info').innerHTML = 
+                        `<p>${data.name}</p><p>${data.phone}</p><p>${data.email}</p>`;
+                })
+                .catch(error => {
+                    document.getElementById('contact-info').textContent = 'Failed to load contact info.';
+                    console.error('Error loading contact info:', error);
+                });
+        }
+
+        // Load all data when the page loads
+        window.onload = function() {
+            loadPhoto();
+            loadReports();
+            loadMeditation();
+            loadDoctorsDetails();
+            loadContactInfo();
+        };
+    </script>
+</body>
+</html>

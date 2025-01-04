@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ccc;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            grid-template-rows: 70px 2fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 100vh;
+        }
+
+        .header {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 0 20px;
+            border-radius: 25px;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .header a.active {
+            color: white;
+            background-color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 25px;
+        }
+
+        .map, .basic-report, .nearby-hospital {
+            background-color: #fff;
+            border-radius: 25px;
+            font-weight: bold;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .map {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .basic-report {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+        }
+
+        .nearby-hospital {
+            grid-column: 1 / 2;
+            grid-row: 3 / 4;
+        }
+
+        .view-more {
+            grid-column: 2 / 3;
+            grid-row: 2 / 4;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            font-weight: bold;
+            height: 35px;
+            width: 120px;
+            margin: auto;
+            border: 2px solid black;
+            font-size: 12px;
+        }
+
+        .sos {
+            grid-column: 2 / 3;
+            grid-row: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sos button {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .sos button:hover {
+            background-color: darkred;
+            transform: scale(1.1);
+        }
+
+        .sos button:active {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="#" class="active">Home</a>
+            <a href="#">Reports</a>
+            <a href="#">Routine</a>
+            <div>
+                <a href="#">Signup</a> |
+                <a href="#">Log-in</a>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="map">
+            <h2>Map</h2>
+            <div id="map-data">Loading map data...</div>
+        </div>
+
+        <!-- Basic Report Section -->
+        <div class="basic-report">
+            <h2>Basic Report</h2>
+            <div id="report-data">Loading report data...</div>
+        </div>
+
+        <!-- Nearby Hospital Section -->
+        <div class="nearby-hospital">
+            <h2>Nearby Hospitals</h2>
+            <div id="hospital-data">Loading hospital data...</div>
+        </div>
+
+        <!-- View More Section -->
+        <div class="view-more">VIEW MORE DETAIL</div>
+
+        <!-- SOS Section -->
+        <div class="sos">
+            <button onclick="triggerSOS()">SOS</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch data for the Map section
+        function loadMapData() {
+            fetch('/api/map')
+                .then(response => response.json())
+                .then(data => {
+                    const mapData = document.getElementById('map-data');
+                    mapData.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('map-data').textContent = 'Failed to load map data.';
+                });
+        }
+
+        // Function to fetch data for the Basic Report section
+        function loadReportData() {
+            fetch('/api/report')
+                .then(response => response.json())
+                .then(data => {
+                    const reportData = document.getElementById('report-data');
+                    reportData.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('report-data').textContent = 'Failed to load report data.';
+                });
+        }
+
+        // Function to fetch data for the Nearby Hospital section
+        function loadHospitalData() {
+            fetch('/api/hospitals')
+                .then(response => response.json())
+                .then(data => {
+                    const hospitalData = document.getElementById('hospital-data');
+                    hospitalData.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('hospital-data').textContent = 'Failed to load hospital data.';
+                });
+        }
+
+        // Function to trigger SOS action
+        function triggerSOS() {
+            alert('SOS Triggered! Help is on the way.');
+            // Add backend call or additional action here
+            fetch('/api/sos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emergency: true })
+            }).then(response => {
+                if (response.ok) {
+                    alert('SOS request sent successfully!');
+                } else {
+                    alert('Failed to send SOS request.');
+                }
+            }).catch(() => {
+                alert('Failed to send SOS request.');
+            });
+        }
+
+        // Load data for all sections when the page loads
+        window.onload = function() {
+            loadMapData();
+            loadReportData();
+            loadHospitalData();
+        };
+    </script>
+</body>
+</html>
